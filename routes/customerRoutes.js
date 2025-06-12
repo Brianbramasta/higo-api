@@ -21,14 +21,31 @@ router.get('/customers', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 100;
+    const search = req.query.search;
+    const sortBy = req.query.sortBy || 'Number';
+    const sortOrder = req.query.sortOrder === 'desc' ? -1 : 1;
     const skip = (page - 1) * limit;
 
+    // Build search query
+    let searchQuery = {};
+    if (search) {
+      searchQuery = {
+        $or: [
+          { Name: { $regex: search, $options: 'i' } },
+          { Email: { $regex: search, $options: 'i' } },
+          { 'Name of Location': { $regex: search, $options: 'i' } },
+          { 'No Telp': { $regex: search, $options: 'i' } }
+        ]
+      };
+    }
+
     const [customers, total] = await Promise.all([
-      Customer.find()
+      Customer.find(searchQuery)
+        .sort({ [sortBy]: sortOrder })
         .skip(skip)
         .limit(limit)
         .lean(),
-      Customer.countDocuments()
+      Customer.countDocuments(searchQuery)
     ]);
 
     res.json({
