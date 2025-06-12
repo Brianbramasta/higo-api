@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: higo-api
+    env: node
+    branch: main
+    buildCommand: "npm install"
+    startCommand: "node index.js"
+    envVars:
+      - key: MONGO_URI
+        value: mongodb+srv://brian:brian12345@cluster0.fwmsd6j.mongodb.net/higo?retryWrites=true&w=majority&appName=Cluster0
