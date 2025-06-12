@@ -4,9 +4,11 @@ const Customer = require('../models/Customer');
 const multer = require('multer');
 const csv = require('csv-parser');
 const fs = require('fs');
+const os = require('os');
 
+// Use temp directory for file uploads
 const storage = multer.diskStorage({
-  destination: './uploads/',
+  destination: os.tmpdir(),
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
   }
